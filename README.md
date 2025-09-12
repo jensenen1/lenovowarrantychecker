@@ -1,4 +1,5 @@
 #Looks up the serial number on the device
+
 function Get-ComputerSerialNumber {
     $invalidSerials = @(
         "To Be Filled By O.E.M.",
