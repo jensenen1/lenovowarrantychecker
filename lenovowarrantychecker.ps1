@@ -44,7 +44,7 @@ Write-Output "Warranty start: $dateValue"
 Write-Output "Warranty end: $dateValueEnd"
 
 Stop-SeDriver $driver
-
+#Update based on your own DBfields in snipe
 $customFields = @{
     "_snipeit_warranty_start_14" = if ($dateValue) { $dateValue } else { "" }
     "_snipeit_warranty_end_15"   = if ($dateValueEnd) { $dateValueEnd } else { "" }
