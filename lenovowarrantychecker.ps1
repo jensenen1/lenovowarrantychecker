@@ -1,3 +1,6 @@
+Install-Module -Name Selenium -Force -AllowClobber
+Import-Module Selenium
+
 function Get-ComputerSerialNumber {
     $invalidSerials = @(
         "To Be Filled By O.E.M.",
@@ -31,5 +34,34 @@ foreach ($el in $dateElements) {
     Write-Output $el.Text
 }
 $dateValue = $dateElements[1].Text  
+$dateValueend = $dateElements[4].Text
 
-Write-Output "Warranty Start-date: $dateValue"
+Write-Output "Warranty start: $dateValue"
+Write-Output "Warranty end: $dateValueEnd"
+
+Stop-SeDriver $driver
+
+$customFields = @{
+    "_snipeit_warranty_start_14" = if ($dateValue) { $dateValue } else { "" }
+    "_snipeit_warranty_end_15"   = if ($dateValueEnd) { $dateValueEnd } else { "" }
+}
+
+$headers = @{
+    "Authorization" = "Bearer $SnipeItApiToken"
+    "accept"        = "application/json"
+    "content-type"  = "application/json"
+}
+
+$searchUrl = "$SnipeItApiUrl/hardware?search=$serialNumber"
+$response = Invoke-RestMethod -Uri $searchUrl -Headers $headers -Method Get
+
+if ($response.total -gt 0) {
+    $assetId = $response.rows[0].id
+    $body = $customFields | ConvertTo-Json
+    $updateUrl = "$SnipeItApiUrl/hardware/$assetId"
+    $updateResponse = Invoke-RestMethod -Uri $updateUrl -Headers $headers -Method Patch -Body $body
+    Write-Output "Asset updated with ID: $assetId"
+} else {
+    Write-Output "Asset not found for serial number $serialNumber."
+}
+
