@@ -1,3 +1,6 @@
+$ApiUrl = "https://example.com/api/v1"
+$ApiToken = "YOURTOKEN"
+
 Install-Module -Name Selenium -Force -AllowClobber
 Import-Module Selenium
 
@@ -23,6 +26,7 @@ $driver.Navigate().GoToUrl("https://pcsupport.lenovo.com/us/en/products/$serialN
 
 Start-Sleep -Seconds 2
 
+#For country popup (May need to be removed if not necessary)
 $proceedButton = $driver.FindElementByXPath("//button[contains(text(), 'Proceed with United States of America')]")
 $proceedButton.Click()
 
